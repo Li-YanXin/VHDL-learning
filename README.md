@@ -23,10 +23,10 @@ VHDL FPGA学习
   * 建立时间（setup time）
     建立时间是指在触发器的时钟信号上升沿到来以前，数据稳定不变的时间，如果建立时间不够，数据将不能在这个时钟上升沿被打入触发器；
 
-  * 保持时间（hold time）
+  * 保持时间（hold time） 
     保持时间是指在触发器的时钟信号上升沿到来以后，数据稳定不变的时间，如果保持时间不够，数据同样不能被打入触发器。 
 
-    <div align=center>![建立时间与保持时间](https://images0.cnblogs.com/i/526766/201405/111711122603954.png)
+    <div align=center>![建立时间与保持时间](E:\Li-YanXin-repo\VHDL-learning\Tsu&Thold.png)  
     <center>建立时间与保持时间</center>
     
 
