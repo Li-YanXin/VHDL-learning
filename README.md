@@ -41,13 +41,18 @@ VHDL FPGA学习
     由于时钟到每个寄存器的路径延迟不一样，造成信号到达寄存器的输入端 clock pin 的时间也不一样，我们把时钟信号到达不同寄存器的时间偏差称为skew。其实time skew在FPGA设计中是可以忽略的，由于在FPGA 设计中一般是采用统一的系统时钟，也就是利用从全局时钟管脚输入的时钟，这样在内部时钟的延时完全可以忽略不计。
     
     FPGA设计中不外乎寄存器加组合逻辑，因此以下面的模型分析时序约束：
-    <div align=center><img width="250" height="250" src="./images/DFF_model.png"/></div>
+    <div align=center><img width="450" height="250" src="./images/DFF_model.png"/></div>
     
     图中存在两个DFF，D1、Q1为DFF1的输入输出，D2、Q2为DFF2的输入输出，Tco为第一级DFF的输出延时，Tsu为第二季DFF的建立时间。它们应该满足什么关系呢？
     
-    <div align=center><img width="250" height="250" src="./images/Tsu_equation.png"/></div>
+    <div align=center><img width="450" height="250" src="./images/Tsu_equation.png"/></div>
 
-　　
+　　在第一个时钟上升沿，前边的触发器采集D1信号，将高电平打入触发器，经过Tco的触发器输出延时到达组合逻辑电路。又经过组合逻辑电路的延时Tcomb（我们假定组合逻辑电路此时没有改变信号的高低，可以把它假定为一个缓冲器）送到了D2接口上。在第二个时钟上升沿到来之前，D2数据线上的信号要满足稳定时间>触发器的建立时间Tsu。
+
+  $$Tclk - Tco - Tcomb > Tsu$$
+　　考虑最坏的情况：触发器的输出延时最大，组合逻辑电路的延时也最大，可得：
+
+  $$Tclk - Tco-max - Tcomb-max > Tsu$$
 
 
 　　
