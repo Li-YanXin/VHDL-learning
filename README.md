@@ -44,14 +44,19 @@ VHDL FPGA学习
     
     <div align=center><img width="450" height="250" src="./images/DFF_model.png"/></div>
     
-    图中存在两个DFF，D1、Q1为DFF1的输入输出，D2、Q2为DFF2的输入输出，Tco为第一级DFF的输出延时，Tsu为第二季DFF的建立时间。它们应该满足什么关系呢？
+    图中存在两个DFF，D1、Q1为DFF1的输入输出，D2、Q2为DFF2的输入输出，Tco为第一级DFF的输出延时，Tsu为第二级DFF的建立时间，Th为第二级DFF的保持时间。它们应该满足什么关系呢？
     
     <div align=center><img width="550" height="350" src="./images/Tsu_equation.png"/></div>
 
 　　在第一个时钟上升沿，前边的触发器采集D1信号，将高电平打入触发器，经过Tco的触发器输出延时到达组合逻辑电路。又经过组合逻辑电路的延时Tcomb（我们假定组合逻辑电路此时没有改变信号的高低，可以把它假定为一个缓冲器）送到了D2接口上。在第二个时钟上升沿到来之前，D2数据线上的信号要满足稳定时间>触发器的建立时间Tsu。        
-    `<div align=center>Tclk - Tco - Tcomb > Tsu</div>`  
+    <div align=center>Tclk - Tco - Tcomb > Tsu</div>  
 　　考虑最坏的情况：触发器的输出延时最大，组合逻辑电路的延时也最大，可得：    
-    <div align=center>Tclk - Tco-max - Tcomb-max > Tsu</div> 
+    <div align=center>Tclk - Tco_max - Tcomb_max > Tsu</div> 
+    
+    <div align=center><img width="550" height="350" src="./images/Th_equation.png"/></div>
+    
+    相对于建立时间，保持时间比较难理解，其实质是前一级DFF的输出不能太快在当前沿到达DFF2。为防止DFF1采到的新数据太快到达DFF2而“冲掉”原来的正确数据，数据必须要在一定时间之后才允许到达，所以保持时间分析，分析的是DFF1和DFF2的同一个时钟沿。
+    接着之前的时序图继续，在第二个时钟上升沿前边触发器采集到D1上的低电平，经过Tco的延时在Q1上得到表达。这个低电平在经过组合电路延时Tcomb到达D2。现在的问题是经过这么Tco+Tcomb的延时，D2上原本的高电平在**第二个时钟上升沿到来之后的稳定时间 > 第二个触发器的保持时间**。满足了这个条件，后边的触发器才能稳定的接收到最初由D1传过来的高电平。
 
 
 　　
