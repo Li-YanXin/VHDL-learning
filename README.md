@@ -73,13 +73,19 @@ VHDL FPGA学习
 　　因此，在一个已经给出时钟频率的电路中，由于电子元件的建立时间、保持时间都是不变的，我们要满足时序约束，必须使组合逻辑电路延迟满足上面的公式。
 
 　　同时，这个公式也可以反向考虑，如果我们想推断自己的系统可以运行的最大时钟频率Fmax，我们可以通过前半部分公式来倒推。  
-　　首先让我们先来看看Fmax 是如何计算出来的。时钟周期 Tclk = Tco + Tcomb + Troute + Tsu, 则时钟频率 Fmax = 1/Tclk。其中 Troute 为FPGA的布线延时。
+　　首先让我们先来看看Fmax 是如何计算出来的。时钟周期 Tclk = Tco + Tcomb + Troute + Tsu, 则时钟频率 Fmax = 1/Tclk。其中 Troute 为FPGA的布线延时。  
 　　在影响 Fmax 的四个参数中，由于针对某一个器件 Tsu 和 Tco 是固定的，因此我们在设计中需要考虑的参数只有两个 Tcomb 和 Troute。通过良好的设计以及一些如 Pipeline 的技巧，我们可以把Tcomb 和Troute 控制在一定的范围内。达到我们所要求的Fmax。  
 　　经验表明一个良好的设计，通常可以将组合逻辑的层次控制在 4 层以内，即 (Lut Levels <= 4) 。而 Lut Levels (组合逻辑的层次) 将直接影响 Tcomb 和Troute 的大小。组合逻辑的层次多，则 Tcomb 和 Troute 的延时就大，反之，组合逻辑的层次少，则 Tcomb 和 Troute 的延时就小。
-   
+  
+ * 加入时钟延迟的模型
+ 
+   <div align=center> <img width="550" height="350" src="./images/model_add_time_skew.jpg"/> </div>    
     
-    
-    
+    若存在时钟延迟，可以看出 Tskew 使建立时间的条件变松，而保持时间的条件变紧。总之，**建立时间和保持时间的条件是对立的**。  
+    此时的公式变为：  
+    <div align=center> Tskew + Tclk - Tco_max - Tcomb_max > Tsu </div> 
+    <div align=center> Tco_min + Tcomb_min - Tskew > Th </div>  
+    <div align=center> (Tskew + Tclk - Tco_max -  Tsu) > Tcomb > (Th - Tco_min + Tskew) </div>  
     
     
     
