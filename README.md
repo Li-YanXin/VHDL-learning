@@ -44,31 +44,54 @@ VHDL FPGA学习
     
     <div align=center><img width="450" height="250" src="./images/DFF_model.png"/></div>
     
-    图中存在两个DFF，D1、Q1为DFF1的输入输出，D2、Q2为DFF2的输入输出，Tco为第一级DFF的输出延时，Tsu为第二级DFF的建立时间，Th为第二级DFF的保持时间。它们应该满足什么关系呢？
+    图中存在两个DFF，D1、Q1为DFF1的输入输出，D2、Q2为DFF2的输入输出，Tco为第一级DFF的输出延时，Tsu为第二级DFF的建立时间，Th为第二级DFF的保持时间。它们应该满足什么关系呢？   
+* 建立时间需要满足的条件
     
     <div align=center><img width="550" height="350" src="./images/Tsu_equation.png"/></div>
 
-　　在第一个时钟上升沿，前边的触发器采集D1信号，将高电平打入触发器，经过Tco的触发器输出延时到达组合逻辑电路。又经过组合逻辑电路的延时Tcomb（我们假定组合逻辑电路此时没有改变信号的高低，可以把它假定为一个缓冲器）送到了D2接口上。在第二个时钟上升沿到来之前，D2数据线上的信号要满足稳定时间>触发器的建立时间Tsu。
+　　在第一个时钟上升沿，前边的触发器采集D1信号，将高电平打入触发器，经过Tco的触发器输出延时到达组合逻辑电路。又经过组合逻辑电路的延时Tcomb（我们假定组合逻辑电路此时没有改变信号的高低，可以把它假定为一个缓冲器）送到了D2接口上。在第二个时钟上升沿到来之前，**D2数据线上的信号要满足稳定时间>触发器的建立时间Tsu**。
    <div align=center> Tclk - Tco - Tcomb > Tsu </div>  
    
-　　考虑最坏的情况：触发器的输出延时最大，组合逻辑电路的延时也最大，可得：    
+　　考虑最坏的情况：触发器的输出延时最大，组合逻辑电路的延时也最大，可得    
     <div align=center> Tclk - Tco_max - Tcomb_max > Tsu </div>  
-    <div align=center> <img width="550" height="350" src="./images/Th_equation.png"/> </div>      
-    相对于建立时间，保持时间比较难理解，其实质是前一级DFF的输出不能太快在当前沿到达DFF2。为防止DFF1采到的新数据太快到达DFF2而“冲掉”原来的正确数据，数据必须要在一定时间之后才允许到达，所以保持时间分析，分析的是DFF1和DFF2的同一个时钟沿。  
-    接着之前的时序图继续，在第二个时钟上升沿前边触发器采集到D1上的低电平，经过Tco的延时在Q1上得到表达。这个低电平在经过组合电路延时Tcomb到达D2。现在的问题是经过这么Tco+Tcomb的延时，D2上原本的高电平在**第二个时钟上升沿到来之后的稳定时间 > 第二个触发器的保持时间**。满足了这个条件，后边的触发器才能稳定的接收到最初由D1传过来的高电平。   
+    
+ * 保持时间需要满足的条件  
+    
+    <div align=center> <img width="550" height="350" src="./images/Th_equation.png"/> </div>    
+    
+　　相对于建立时间，保持时间比较难理解，其实质是前一级DFF的输出不能太快在当前沿到达DFF2。为防止DFF1采到的新数据太快到达DFF2而“冲掉”原来的正确数据，数据必须要在一定时间之后才允许到达，所以保持时间分析，分析的是DFF1和DFF2的同一个时钟沿。  
+    
+　　接着之前的时序图继续，在第二个时钟上升沿前边触发器采集到D1上的低电平，经过Tco的延时在Q1上得到表达。这个低电平在经过组合电路延时Tcomb到达D2。现在的问题是经过这么Tco+Tcomb的延时，D2上原本的高电平在**第二个时钟上升沿到来之后的稳定时间 > 第二个触发器的保持时间**。满足了这个条件，后边的触发器才能稳定的接收到最初由D1传过来的高电平。   
+    <div align=center> Tco + Tcomb > Th </div>  
+ 　　考虑到最坏的情况：触发器的输出延时最小，组合逻辑电路的延时也最小。
+   <div align=center> Tco_min + Tcomb_min > Th </div>  
+   
+ * 我们可以得到中间组合逻辑电路的输出延时范围为
 
+    <div align=center> (Tclk - Tco_max -  Tsu) > Tcomb > (Th - Tco_min) </div>  
+    
+　　因此，在一个已经给出时钟频率的电路中，**由于电子元件的建立时间、保持时间都是不变的，我们要满足时序约束，必须使组合逻辑电路延迟满足上面的公式**。
 
-　　
-　　
-
+　　同时，这个公式也可以反向考虑，如果我们想推断自己的系统可以运行的最大时钟频率Fmax，我们可以通过前半部分公式来倒推。  
+　　首先让我们先来看看Fmax 是如何计算出来的。时钟周期 Tclk = Tco + Tcomb + Troute + Tsu, 则时钟频率 Fmax = 1/Tclk。其中 Troute 为FPGA的布线延时。  
+　　在影响 Fmax 的四个参数中，由于针对某一个器件 Tsu 和 Tco 是固定的，因此我们在设计中需要考虑的参数只有两个 Tcomb 和 Troute。通过良好的设计以及一些如 Pipeline 的技巧，我们可以把Tcomb 和Troute 控制在一定的范围内。达到我们所要求的Fmax。  
+　　经验表明一个良好的设计，通常可以将组合逻辑的层次控制在 4 层以内，即 (Lut Levels <= 4) 。而 Lut Levels (组合逻辑的层次) 将直接影响 Tcomb 和Troute 的大小。**组合逻辑的层次多，则 Tcomb 和 Troute 的延时就大，最大时钟频率就会变小，反之，组合逻辑的层次少，则 Tcomb 和 Troute 的延时就小，最大时钟频率就可以更大**。
+  
+ * 加入时钟延迟的模型
+ 
+   <div align=center> <img width="550" height="350" src="./images/model_add_time_skew.jpg"/> </div>    
+    
+　　若存在时钟延迟，可以看出 Tskew 使建立时间的条件变松，而保持时间的条件变紧。总之，**建立时间和保持时间的条件是对立的**。  
+　　此时的公式变为：  
+    <div align=center> Tskew + Tclk - Tco_max - Tcomb_max > Tsu </div> 
+    <div align=center> Tco_min + Tcomb_min - Tskew > Th </div>  
+    <div align=center> (Tskew + Tclk - Tco_max -  Tsu) > Tcomb > (Th - Tco_min + Tskew) </div>  
+    
+ ## 总结
+　　现在我们基本掌握了建立时间和保持时间的概念，下一篇可以开始讨论跨时钟域的问题了！
     
     
-
-
-
-
-
-
-
-
-
+    
+    
+    
+    
