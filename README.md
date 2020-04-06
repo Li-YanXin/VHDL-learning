@@ -25,9 +25,11 @@ VHDL FPGA学习
 
   * 保持时间（hold time） 
     保持时间是指在触发器的时钟信号上升沿到来以后，数据稳定不变的时间，如果保持时间不够，数据同样不能被打入触发器。 
+    <div align=center><img width="150" height="150" src="./images/tsu&thold.png"/></div>
 
-    <div align=center>![建立时间与保持时间](./Tsu&Thold.png)  
     <center>建立时间与保持时间</center>
+
+    
     
 
 
