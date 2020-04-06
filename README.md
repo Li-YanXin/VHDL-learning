@@ -38,12 +38,14 @@ VHDL FPGA学习
     触发器的输出经过组合逻辑所需要的时间。我的理解是，在VHDL语言中所写的if-else，switch等选择逻辑如果层次过多，会导致Tcomb增大。因此要选择尽可能简洁的描述方式去优化自己的代码。 
    
   * 时钟偏差(Time skew)
-    由于时钟到每个寄存器的路径延迟不一样，造成信号到达寄存器的输入端 clock pin 的时间也不一样，我们把时钟信号到达不同寄存器的时间偏差称为skew。但是在FPGA中，由于在布局布线过程中已经考虑了时钟偏差，time skew的存在一般可以忽略。
+    由于时钟到每个寄存器的路径延迟不一样，造成信号到达寄存器的输入端 clock pin 的时间也不一样，我们把时钟信号到达不同寄存器的时间偏差称为skew。其实time skew在FPGA设计中是可以忽略的，由于在FPGA 设计中一般是采用统一的系统时钟，也就是利用从全局时钟管脚输入的时钟，这样在内部时钟的延时完全可以忽略不计。
     
     FPGA设计中不外乎寄存器加组合逻辑，因此以下面的模型分析时序约束：
     <div align=center><img width="250" height="250" src="./images/DFF_model.png"/></div>
     
-    图中存在两个DFF，D1、Q1为DFF1的输入输出，D2、Q2为DFF2的输入输出，Tco
+    图中存在两个DFF，D1、Q1为DFF1的输入输出，D2、Q2为DFF2的输入输出，Tco为第一级DFF的输出延时，Tsu为第二季DFF的建立时间。它们应该满足什么关系呢？
+    
+    <div align=center><img width="250" height="250" src="./images/Tsu_equation.png"/></div>
 
 　　
 
